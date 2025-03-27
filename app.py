@@ -95,27 +95,29 @@ async def vllmt(request: Request):
                 req_swap_space = req_data.get("swap_space", 4)
                 req_enable_chunked_prefill = req_data.get("enable_chunked_prefill", True)
                 req_trust_remote_code = req_data.get("trust_remote_code", True)
+                req_disable_torch_compile = req_data.get("disable_torch_compile", True)
                 req_model_storage = req_data.get("model_storage", "/models")
                 req_model_path = f'{req_model_storage}/{req_model}'
                 
                 
-                # log_format = " >>>>>>>>>>>>>>>> {}: {}"
-                # print(log_format.format("req_type", req_data["req_type"]))
-                # print(log_format.format("req_model", "facebook/opt-125m"))
-                # print(log_format.format("req_tensor_parallel_size", "1"))
-                # print(log_format.format("req_gpu_memory_utilization", "0.77"))
-                # print(log_format.format("req_max_model_len", "2048"))
-                # print(log_format.format("req_cpu_offload_gb", "0"))
-                # print(log_format.format("req_enforce_eager", "True"))
-                # print(log_format.format("req_enable_prefix_caching", "True"))
-                # print(log_format.format("req_dtype", "auto"))
-                # print(log_format.format("req_torch_dtype", "auto"))
-                # print(log_format.format("req_kv_cache_dtype", "auto"))
-                # print(log_format.format("req_swap_space", "4"))
-                # print(log_format.format("req_enable_chunked_prefill", "True"))
-                # print(log_format.format("req_trust_remote_code", "True"))
-                # print(log_format.format("req_model_storage", "/models"))
-                # print(log_format.format("req_model_path", "models/facebook/opt-125m"))
+                log_format = " >>>>>>>>>>>>>>>> {}: {}"
+                print(log_format.format("req_type", req_data["req_type"]))
+                print(log_format.format("req_model", "facebook/opt-125m"))
+                print(log_format.format("req_tensor_parallel_size", "1"))
+                print(log_format.format("req_gpu_memory_utilization", "0.77"))
+                print(log_format.format("req_max_model_len", "2048"))
+                print(log_format.format("req_cpu_offload_gb", "0"))
+                print(log_format.format("req_enforce_eager", "True"))
+                print(log_format.format("req_enable_prefix_caching", "True"))
+                print(log_format.format("req_dtype", "auto"))
+                print(log_format.format("req_torch_dtype", "auto"))
+                print(log_format.format("req_kv_cache_dtype", "auto"))
+                print(log_format.format("req_swap_space", "4"))
+                print(log_format.format("req_enable_chunked_prefill", "True"))
+                print(log_format.format("req_trust_remote_code", "True"))
+                print(log_format.format("req_disable_torch_compile", "True"))
+                print(log_format.format("req_model_storage", "/models"))
+                print(log_format.format("req_model_path", "models/facebook/opt-125m"))
 
                 log_format = "{} >>>>>>>>>>>>>>>> {}: {}"
                 logging.info("")
@@ -133,6 +135,7 @@ async def vllmt(request: Request):
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_swap_space", "4"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_enable_chunked_prefill", "True"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_trust_remote_code", "True"))
+                logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_disable_torch_compile", "True"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_model_storage", "/models"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_model_path", "models/facebook/opt-125m"))
                 logging.info("")
@@ -187,7 +190,8 @@ async def vllmt(request: Request):
                     kv_cache_dtype=req_kv_cache_dtype,
                     swap_space=req_swap_space,
                     enable_chunked_prefill=req_enable_chunked_prefill,
-                    trust_remote_code=req_trust_remote_code
+                    trust_remote_code=req_trust_remote_code,
+                    disable_torch_compile=req_disable_torch_compile
                 )
                 logging.info(f' @@@ Model loaded successfully')
                 return JSONResponse({"result_status": 200, "result_data": "Model loaded successfully"})
