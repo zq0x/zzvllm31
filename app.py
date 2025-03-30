@@ -8,13 +8,31 @@ from vllm import LLM, SamplingParams
 from transformers import AutoModelForCausalLM
 import gc
 import logging
-
+import argparse
 
 LOG_PATH= './logs'
 LOGFILE_CONTAINER = './logs/logfile_container_vllm.log'
 os.makedirs(os.path.dirname(LOGFILE_CONTAINER), exist_ok=True)
 logging.basicConfig(filename=LOGFILE_CONTAINER, level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logging.info(f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] [START] started logging in {LOGFILE_CONTAINER}')
+
+
+# Add argument parsing at the start of your script
+parser = argparse.ArgumentParser()
+parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-1.5B-Instruct")
+parser.add_argument("--tensor-parallel-size", type=int, default=1)
+parser.add_argument("--gpu_memory_utilization", type=float, default=0.95)
+parser.add_argument("--max-model-len", type=int, default=4096)
+args, _ = parser.parse_known_args()
+if args.model:
+    print(f' @@@ args.model: {args.model}')
+if args.tensor_parallel_size:
+    print(f' @@@ args.tensor_parallel_size: {args.tensor_parallel_size}')
+if args.gpu_memory_utilization:
+    print(f' @@@ args.gpu_memory_utilization: {args.gpu_memory_utilization}')
+if args.max_model_len:
+    print(f' @@@ args.max_model_len: {args.max_model_len}')
+
 
 def initialize_nvml():
     try:
@@ -99,6 +117,24 @@ async def vllmt(request: Request):
                 req_model_path = f'{req_model_storage}/{req_model}'
                 
                 
+                
+                if args.model:
+                    print(f' @@@ args.model: {args.model}')
+                    req_model = args.model
+                if args.tensor_parallel_size:
+                    print(f' @@@ args.tensor_parallel_size: {args.tensor_parallel_size}')
+                    req_tensor_parallel_size = args.tensor_parallel_size
+                if args.gpu_memory_utilization:
+                    print(f' @@@ args.gpu_memory_utilization: {args.gpu_memory_utilization}')
+                    req_gpu_memory_utilization = args.gpu_memory_utilization
+                if args.max_model_len:
+                    print(f' @@@ args.max_model_len: {args.max_model_len}')
+                    req_max_model_len = args.max_model_len
+
+
+                                
+                
+                
                 log_format = " >>>>>>>>>>>>>>>> {}: {}"
                 print(log_format.format("req_type", req_data["req_type"]))
                 print(log_format.format("req_model", "facebook/opt-125m"))
@@ -166,12 +202,12 @@ async def vllmt(request: Request):
                 else:
                     print(f' @@@ NUH UH DIDNT FIND MODEL YET!! {req_model} ist NAWT in {models_found}')
                 
-                free_memory = torch.cuda.mem_get_info()[0] / (1024 ** 3)
-                logging.info(f' @@@ Available GPU memory: {free_memory:.2f} GB')
+                # free_memory = torch.cuda.mem_get_info()[0] / (1024 ** 3)
+                # logging.info(f' @@@ Available GPU memory: {free_memory:.2f} GB')
 
-                model_pretrained = AutoModelForCausalLM.from_pretrained(req_model, torch_dtype="auto")
-                model_size = sum(p.numel() * p.element_size() for p in model_pretrained.parameters()) / (1024 ** 3)  # Size in GB
-                logging.info(f' @@@ Model size: {model_size:.2f} GB')
+                # model_pretrained = AutoModelForCausalLM.from_pretrained(req_model, torch_dtype="auto")
+                # model_size = sum(p.numel() * p.element_size() for p in model_pretrained.parameters()) / (1024 ** 3)  # Size in GB
+                # logging.info(f' @@@ Model size: {model_size:.2f} GB')
                 
                 logging.info(f' @@@ Using model path: {model_path}')
 
@@ -201,7 +237,7 @@ async def vllmt(request: Request):
                 if llm_instance is None:
                     raise HTTPException(status_code=400, detail="No model loaded. Please load a model first.")
 
-                prompt = req_data.get("prompt", "Whale")
+                prompt = req_data.get("prompt", "Follow the")
                 temperature = req_data.get("temperature", 0.8)
                 top_p = req_data.get("top_p", 0.95)
                 max_tokens = req_data.get("max_tokens", 100)
