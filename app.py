@@ -17,18 +17,6 @@ logging.basicConfig(filename=LOGFILE_CONTAINER, level=logging.DEBUG, format='%(a
 logging.info(f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] [START] started logging in {LOGFILE_CONTAINER}')
 
 
-# Add argument parsing at the start of your script
-parser = argparse.ArgumentParser()
-args, _ = parser.parse_known_args()
-if args.model:
-    print(f' @@@ args.model: {args.model}')
-if args.tensor_parallel_size:
-    print(f' @@@ args.tensor_parallel_size: {args.tensor_parallel_size}')
-if args.gpu_memory_utilization:
-    print(f' @@@ args.gpu_memory_utilization: {args.gpu_memory_utilization}')
-if args.max_model_len:
-    print(f' @@@ args.max_model_len: {args.max_model_len}')
-
 
 def initialize_nvml():
     try:
@@ -98,7 +86,7 @@ async def vllmt(request: Request):
             try:
                 req_model = req_data.get("model", "facebook/opt-125m")
                 req_tensor_parallel_size = req_data.get("tensor_parallel_size", 1)
-                req_gpu_memory_utilization = req_data.get("gpu_memory_utilization", 0.78)
+                req_gpu_memory_utilization = req_data.get("gpu_memory_utilization", 0.91)
                 req_max_model_len = req_data.get("max_model_len", 1024)
                 req_cpu_offload_gb = req_data.get("cpu_offload_gb", 0)
                 req_enforce_eager = req_data.get("enforce_eager", True)
@@ -132,9 +120,9 @@ async def vllmt(request: Request):
                 
                 log_format = " >>>>>>>>>>>>>>>> {}: {}"
                 print(log_format.format("req_type", req_data["req_type"]))
-                print(log_format.format("req_model", "facebook/opt-125m"))
+                print(log_format.format("req_model", "Qwen/Qwen2.5-1.5B-Instruct"))
                 print(log_format.format("req_tensor_parallel_size", "1"))
-                print(log_format.format("req_gpu_memory_utilization", "0.77"))
+                print(log_format.format("req_gpu_memory_utilization", "0.87"))
                 print(log_format.format("req_max_model_len", "2048"))
                 print(log_format.format("req_cpu_offload_gb", "0"))
                 print(log_format.format("req_enforce_eager", "True"))
@@ -151,9 +139,9 @@ async def vllmt(request: Request):
                 log_format = "{} >>>>>>>>>>>>>>>> {}: {}"
                 logging.info("")
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_type", req_data["req_type"]))
-                logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_model", "facebook/opt-125m"))
+                logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_model", "Qwen/Qwen2.5-1.5B-Instruct"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_tensor_parallel_size", "1"))
-                logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_gpu_memory_utilization", "0.77"))
+                logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_gpu_memory_utilization", "0.87"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_max_model_len", "2048"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_cpu_offload_gb", "0"))
                 logging.info(log_format.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "req_enforce_eager", "True"))
@@ -279,4 +267,26 @@ async def vllmt(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=1370)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--port", type=int, default=1370, required=True, help="Port to run the application on.")
+    
+    parser.add_argument("--model", type=str, help="ID of the model.")
+    parser.add_argument("--tensor_parallel_size", type=int, default=1, help="Amout of tensors.")
+    parser.add_argument("--gpu_memory_utilization", type=float, default=0.91, help="Max GPU memory.")
+    parser.add_argument("--max_model_len", type=int, default=2048, help="Max model length.")
+    args = parser.parse_args()
+    if args.model:
+        print(f' @@@ args.model: {args.model}')
+    if args.tensor_parallel_size:
+        print(f' @@@ args.tensor_parallel_size: {args.tensor_parallel_size}')
+    if args.gpu_memory_utilization:
+        print(f' @@@ args.gpu_memory_utilization: {args.gpu_memory_utilization}')
+    if args.max_model_len:
+        print(f' @@@ args.max_model_len: {args.max_model_len}')
+    if args.port:
+        print(f' @@@ args.port: {args.port}')
+    port = args.port
+    print(f' @@@ starting unicorn on port: {port}')
+    uvicorn.run(app, host="0.0.0.0", port=port)
+    
+

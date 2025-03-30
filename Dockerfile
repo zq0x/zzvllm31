@@ -1,4 +1,6 @@
-FROM python:3.12-slim
+FROM python:3.9-slim-buster
+
+WORKDIR /usr/src/app
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -10,9 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip3 install huggingface_hub vllm fastapi uvicorn pynvml
 
-WORKDIR /usr/src/app
-
-COPY . /usr/src/app
+COPY . .
 
 EXPOSE 1370
 EXPOSE 1371
@@ -26,6 +26,4 @@ EXPOSE 1378
 EXPOSE 1379
 EXPOSE 1380
 
-ENTRYPOINT ["uvicorn", "app:app"]
-
-
+CMD ["python", "app.py", "--model", "Qwen/Qwen2.5-1.5B-Instruct", "--tensor_parallel_size", "1", "--gpu_memory_utilization", "0.92", "--max_model_len", "2048", "--port", "1370"]
