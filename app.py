@@ -100,7 +100,15 @@ async def vllmt(request: Request):
                 req_model_storage = req_data.get("model_storage", "/models")
                 req_model_path = f'{req_model_storage}/{req_model}'
                 
-
+                parser = argparse.ArgumentParser()
+                parser.add_argument("--port", type=int, default=1370, required=True, help="Port to run the application on.")
+                
+                parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-1.5B-Instruct", help="ID of the model.")
+                parser.add_argument("--tensor-parallel-size", type=int, default=1, help="Amout of tensors.")
+                parser.add_argument("--gpu-memory-utilization", type=float, default=0.91, help="Max GPU memory.")
+                parser.add_argument("--max-model-len", type=int, default=2048, help="Max model length.")
+                args = parser.parse_args()
+                
                 if args.model:
                     print(f' @@@ args.model: {args.model}')
                     req_model = args.model
@@ -265,15 +273,17 @@ async def vllmt(request: Request):
         logging.error(f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {e}')
         return JSONResponse({"result_status": 500, "result_data": str(e)})
 
+
+
 if __name__ == "__main__":
     import uvicorn
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=1370, required=True, help="Port to run the application on.")
     
-    parser.add_argument("--model", type=str, help="ID of the model.")
-    parser.add_argument("--tensor_parallel_size", type=int, default=1, help="Amout of tensors.")
-    parser.add_argument("--gpu_memory_utilization", type=float, default=0.91, help="Max GPU memory.")
-    parser.add_argument("--max_model_len", type=int, default=2048, help="Max model length.")
+    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-1.5B-Instruct", help="ID of the model.")
+    parser.add_argument("--tensor-parallel-size", type=int, default=1, help="Amout of tensors.")
+    parser.add_argument("--gpu-memory-utilization", type=float, default=0.91, help="Max GPU memory.")
+    parser.add_argument("--max-model-len", type=int, default=2048, help="Max model length.")
     args = parser.parse_args()
     if args.model:
         print(f' @@@ args.model: {args.model}')
