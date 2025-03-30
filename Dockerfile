@@ -1,5 +1,7 @@
 FROM python:3.12-slim
 
+WORKDIR /usr/src/app
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
@@ -10,8 +12,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip3 install huggingface_hub vllm fastapi uvicorn pynvml
 
-WORKDIR /app
-
-COPY app.py /app/app.py
+COPY . .
 
 ENTRYPOINT ["uvicorn", "app:app"]
