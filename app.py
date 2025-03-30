@@ -116,19 +116,18 @@ async def vllmt(request: Request):
                 req_model_storage = req_data.get("model_storage", "/models")
                 req_model_path = f'{req_model_storage}/{req_model}'
                 
-                
-                
-                if args.model:
-                    print(f' @@@ args.model: {args.model}')
+
+                if args.model != "Qwen/Qwen2.5-1.5B-Instruct":
+                    print(f' @@@ args.model != "Qwen/Qwen2.5-1.5B-Instruct": {args.model}')
                     req_model = args.model
-                if args.tensor_parallel_size:
-                    print(f' @@@ args.tensor_parallel_size: {args.tensor_parallel_size}')
+                if args.tensor_parallel_size != 1:
+                    print(f' @@@ args.tensor_parallel_size != 1: {args.tensor_parallel_size}')
                     req_tensor_parallel_size = args.tensor_parallel_size
-                if args.gpu_memory_utilization:
-                    print(f' @@@ args.gpu_memory_utilization: {args.gpu_memory_utilization}')
+                if args.gpu_memory_utilization != 0.95:
+                    print(f' @@@ args.gpu_memory_utilization != 0.95: {args.gpu_memory_utilization}')
                     req_gpu_memory_utilization = args.gpu_memory_utilization
-                if args.max_model_len:
-                    print(f' @@@ args.max_model_len: {args.max_model_len}')
+                if args.max_model_len != 4096:
+                    print(f' @@@ args.max_model_len != 4096: {args.max_model_len}')
                     req_max_model_len = args.max_model_len
 
 

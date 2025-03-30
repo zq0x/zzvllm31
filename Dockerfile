@@ -14,6 +14,4 @@ WORKDIR /app
 
 COPY app.py /app/app.py
 
-EXPOSE 1370
-
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "1370"]
+ENTRYPOINT ["uvicorn", "app:app"]
