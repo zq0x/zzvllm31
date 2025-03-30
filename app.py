@@ -135,12 +135,12 @@ async def fnvllm(request: Request):
 
                 
                 
-                print.info(f' @@@ searching {req_model_storage} ...')
+                print(f' @@@ searching {req_model_storage} ...')
                 models_found = []
                 try:                   
                     if os.path.isdir(req_model_storage):
-                        print.info(f' @@@ found model storage path! {req_model_storage}')
-                        print.info(f' @@@ getting folder elements ...')                        
+                        print(f' @@@ found model storage path! {req_model_storage}')
+                        print(f' @@@ getting folder elements ...')                        
                         for m_entry in os.listdir(req_model_storage):
                             m_path = os.path.join(req_model_storage, m_entry)
                             if os.path.isdir(m_path):
@@ -149,12 +149,12 @@ async def fnvllm(request: Request):
                                     models_found.append(sub_item_path)        
                         print(f' @@@ found models ({len(models_found)}): {models_found}')
                     else:
-                        print.info(f' @@@ ERR model path not found! {req_model_storage}')
+                        print(f' @@@ ERR model path not found! {req_model_storage}')
                 except Exception as e:
-                    print.info(f' @@@ ERR getting models in {req_model_storage}: {e}')
+                    print(f' @@@ ERR getting models in {req_model_storage}: {e}')
 
                 
-                print.info(f' @@@ does requested model path match downloaded?')
+                print(f' @@@ does requested model path match downloaded?')
                 model_path = req_model
                 if req_model_path in models_found:
                     print(f' @@@ FOUND MODELS ALREADY!!! {req_model} ist in {models_found}')
